@@ -1,0 +1,54 @@
+# ==============================================================
+# MOT17 Dataset Configuration
+# Conforme à SVAG-Bench (arXiv:2510.13016)
+# Source: MOT Challenge [4] — Dendorfer et al., IJCV 2021
+# ==============================================================
+
+dataset:
+  name: MOT17
+  root: data/mot17
+  split: train
+  num_classes: 1  # pedestrian
+  input_size: [800, 1333]
+  description: "Multi-Object Tracking benchmark — crowded urban scenes"
+
+# --- Spatial Grounding (TempRMOT) — Section 5.3 ---
+spatial_training:
+  epochs: 60                    # Article: 60 epochs
+  optimizer: Adam
+  lr: 1.0e-5
+  lr_decay_factor: 10
+  lr_decay_epoch: 40            # Decay factor 10 après la 40ème epoch
+  memory_length: 5
+  num_gpus: 4
+
+# --- Temporal Grounding (FlashVTG) — Section 5.3 ---
+temporal_training:
+  optimizer: AdamW
+  feature_dim: 256
+  n_heads: 8
+  tfl_layers: 5
+  K: 4
+  nms_threshold: 0.7
+  data_format: qvhighlights      # Conversion au format QVHighlights
+  # max_visual_length ajusté pour MOT17 (vidéos longues, centaines de frames)
+  max_visual_length: 1500
+
+# --- Évaluation (SVAGEval) — Section 5.1 ---
+evaluation:
+  spatial_metrics:
+    - HOTA          # Higher Order Tracking Accuracy @ α=0.5
+    - DetA          # Detection Accuracy
+    - AssA          # Association Accuracy
+  temporal_metrics:
+    - "R1@0.3"
+    - "R1@0.5"
+    - "R1@0.7"
+    - "R5@0.3"
+    - "R5@0.5"
+    - "R5@0.7"
+    - "R10@0.3"
+    - "R10@0.5"
+    - "R10@0.7"
+    - mAP
+    - mIoU

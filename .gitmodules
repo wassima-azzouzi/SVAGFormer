@@ -1,0 +1,9 @@
+[submodule "temporal"]
+    path = temporal
+    url = https://github.com/Zhuo-Cao/FlashVTG.git
+[submodule "spatial"]
+    path = spatial
+    url = https://github.com/zyn213/TempRMOT.git
+[submodule "evaluation"]
+    path = evaluation
+    url = https://github.com/Shuaicong97/SVAGEval.git

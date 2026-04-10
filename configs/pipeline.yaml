@@ -1,0 +1,71 @@
+# ==============================================================
+# SVAGFormer — Pipeline Configuration
+# Conforme à l'article SVAG-Bench (arXiv:2510.13016, Section 5.3)
+# ==============================================================
+
+device: cuda
+
+# --- Spatial Grounding (TempRMOT) [35] ---
+# Section 5.3 — Spatial Grounding Settings
+spatial:
+  model: "TempRMOT"
+  # Setup officiel sur Refer-KITTI-V2
+  memory_length: 5
+  optimizer: "Adam"
+  lr: 1.0e-5
+  lr_decay_factor: 10
+  lr_decay_epoch: 40
+  total_epochs: 60
+  num_gpus: 4
+  temprmot_config_path: null  # utilise la config par défaut de TempRMOT
+
+# --- Temporal Grounding (FlashVTG) [1] ---
+# Section 5.3 — Temporal Grounding Settings
+temporal:
+  model: "FlashVTG"
+  # Extraction de features
+  video_encoder: "InternVideo2"       # [31] pour les features vidéo
+  text_encoder: "LLaMA"              # [29] pour les features texte
+  llama_model: "meta-llama/Llama-2-7b-hf"
+  # Architecture
+  feature_dim: 256
+  n_heads: 8                         # 8 attention heads dans le module de fusion
+  K: 4                               # paramètre K du temporal feature layering
+  tfl_layers: 5                      # 5 couches de Temporal Feature Layering
+  # Post-processing
+  nms_threshold: 0.7
+  # Optimiseur
+  optimizer: "AdamW"
+  # Données converties au format QVHighlights
+  data_format: "qvhighlights"
+  flashvtg_config_path: null  # utilise la config par défaut de FlashVTG
+
+# --- Datasets ---
+# Chaque dataset est entraîné SÉPARÉMENT (Section 5.3)
+datasets:
+  - ovis
+  - mot17
+  - mot20
+
+# --- Évaluation (SVAGEval) [Section 5.1 & 5.2] ---
+evaluation:
+  # Spatial: HOTA à α=0.5
+  spatial_metric: "HOTA"
+  hota_alpha: 0.5
+  # Temporal: R@N, mAP, mIoU
+  temporal_metrics:
+    - "R1@0.3"
+    - "R1@0.5"
+    - "R1@0.7"
+    - "R5@0.3"
+    - "R5@0.5"
+    - "R5@0.7"
+    - "R10@0.3"
+    - "R10@0.5"
+    - "R10@0.7"
+    - "mAP"
+    - "mIoU"
+  # Score final = mean(scores OVIS, MOT17, MOT20)
+  # Métrique leaderboard: m-HIoU = mean(HOTA, mIoU)
+  final_metric: "m-HIoU"
+  id_mapping: "majority_voting"

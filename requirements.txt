@@ -1,0 +1,32 @@
+# SVAGFormer Dependencies
+# Conforme à SVAG-Bench (arXiv:2510.13016)
+
+# Core
+torch>=2.0
+torchvision>=0.15
+torchaudio>=2.0
+
+# Transformers & LLMs (Section 5.3 — LLaMA text encoder)
+transformers>=4.30
+
+# Computer Vision
+opencv-python>=4.8
+numpy>=1.24
+
+# Feature extraction (Section 5.3 — InternVideo2 video encoder)
+# InternVideo2 est installé via le submodule ou séparément
+# pip install internvideo2  (si disponible)
+
+# Utilities
+tqdm>=4.65
+matplotlib>=3.7
+pyyaml>=6.0
+pandas>=2.0
+
+# Tracking evaluation (Section 5.1 — HOTA metric)
+# SVAGEval est dans le submodule evaluation/
+# HOTA metric from TrackEval
+trackeval>=1.0
+
+# Additional
+scipy>=1.10
