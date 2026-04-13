@@ -1,0 +1,40 @@
+# ============================================================
+# SVAGFormer  –  Default Configuration
+# ============================================================
+
+# ---- Data --------------------------------------------------
+data:
+  root: ""          # <-- Set to your SVAG-Bench root path, or export SVAG_ROOT=...
+  num_frames: 32    # Frames sampled per clip (increase for longer-context)
+
+# ---- Model -------------------------------------------------
+model:
+  hidden_dim:     256       # Internal feature dimension (D)
+  text_model:     "meta-llama/Llama-2-7b-hf"   # or any HF model id
+  num_queries:    100       # Max tracked objects per query
+  num_heads:      8         # Attention heads
+  spatial_layers: 6         # Transformer layers in spatial head
+  tfl_layers:     5         # Temporal Feature Layering depth
+  memory_length:  5         # TempRMOT query-memory length
+
+# ---- Training ----------------------------------------------
+training:
+  epochs:       60
+  batch_size:   4           # Per-GPU batch size
+  num_workers:  4
+  lr:           1.0e-4
+  weight_decay: 1.0e-4
+  lr_step:      40          # Decay LR at this epoch
+  lr_gamma:     0.1
+  grad_clip:    1.0
+  w_spatial:    1.0         # Weight for spatial loss
+  w_temporal:   1.0         # Weight for temporal loss
+  val_every:    5           # Validate every N epochs
+  save_dir:     "checkpoints"
+
+# ---- Evaluation --------------------------------------------
+eval:
+  batch_size:  4
+  num_workers: 4
+  score_thr:   0.3          # Confidence threshold for spatial predictions
+  nms_thr:     0.7          # Temporal NMS threshold
